@@ -1,15 +1,15 @@
 # これは GitHub Actions を始めるための基本的なワークフローです
 
 # ワークフロー名
-name: CI_sample
+name: CI
 
 # ワークフローの実行タイミングを制御します
 on:
   # "main"ブランチへの push または pull request 時にワークフローを実行します
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main" ]
 
   # Actions タブから手動でこのワークフローを実行できます
   workflow_dispatch:
