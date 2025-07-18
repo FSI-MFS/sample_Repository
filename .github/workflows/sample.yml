@@ -7,20 +7,30 @@ name: CI
 on:
   # "main"ブランチへの push または pull request 時にワークフローを実行します
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
   # Actions タブから手動でこのワークフローを実行できます
   workflow_dispatch:
 
 # ワークフローは1つ以上のジョブで構成され、ジョブは順番または並列で実行できます
 jobs:
+
+  # "my_first_job"というジョブIDでジョブを定義
+  my_first_job:
+    runs-on: ubuntu-latest
+    name: My first job
+    
+  # "my_second_job"というジョブIDでジョブを定義
+  my_second_job:
+    runs-on: ubuntu-latest
+    name: My second job
+    
   # このワークフローには "build" というジョブが1つ含まれています
   build:
     # ジョブが実行されるランナーの種類
     runs-on: ubuntu-latest
-
     # steps はジョブ内で実行される一連のタスクです
     steps:
       # actions/checkout@v4 でリポジトリを $GITHUB_WORKSPACE にチェックアウトします
