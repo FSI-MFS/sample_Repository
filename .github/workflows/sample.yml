@@ -1,12 +1,37 @@
-name: workflow_dispatch sample 1
+# これは GitHub Actions を始めるための基本的なワークフローです
 
+# ワークフロー名
+name: CI
+
+# ワークフローの実行タイミングを制御します
 on:
+  # "main"ブランチへの push または pull request 時にワークフローを実行します
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Actions タブから手動でこのワークフローを実行できます
   workflow_dispatch:
 
+# ワークフローは1つ以上のジョブで構成され、ジョブは順番または並列で実行できます
 jobs:
-  printLog:
+  # このワークフローには "build" というジョブが1つ含まれています
+  build:
+    # ジョブが実行されるランナーの種類
     runs-on: ubuntu-latest
-    
+
+    # steps はジョブ内で実行される一連のタスクです
     steps:
-    - name: print log
-      run: echo "Hello!"
+      # actions/checkout@v4 でリポジトリを $GITHUB_WORKSPACE にチェックアウトします
+      - uses: actions/checkout@v4
+
+      # ランナーのシェルで1行のコマンドを実行します
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # ランナーのシェルで複数行のコマンドを実行します
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
