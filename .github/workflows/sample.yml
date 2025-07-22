@@ -1,6 +1,10 @@
 # ワークフロー名：CI
 name: CI
 
+permissions:
+  checks: write
+  pull-requests: write
+
 # ワークフローの実行タイミングを制御します
 on:
   # "master"ブランチへの push または pull request 時にワークフローを実行します
