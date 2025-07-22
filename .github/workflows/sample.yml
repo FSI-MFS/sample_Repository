@@ -38,7 +38,7 @@ jobs:
       # pytest -> JUnit xml形式で結果を出力
       - name: PyTest
         run: |
-          python -m pytest test --junit-xml results/pytest.xml
+          python -m pytest . --junit-xml results/pytest.xml
         continue-on-error: true
           
       # テスト結果の表示
@@ -53,7 +53,9 @@ jobs:
         if: success() || failure()
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          name: Unit Test Results (Python 3.11)
+          path: results
+
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
