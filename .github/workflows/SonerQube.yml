@@ -1,12 +1,14 @@
 name: SonarQube Check
 
-on:
-  push:
-    branches: [master]
-
 permissions:
   id-token: write
   contents: read
+  
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   sonarqube:
