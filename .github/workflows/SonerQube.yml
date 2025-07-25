@@ -1,0 +1,43 @@
+name: SonarQube Check
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  sonarqube:
+    name: send report to sonarqube
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # カバレッジを出力するためにpytest-covライブラリが必要
+      - name: Test
+        run: |
+          pip install pytest-cov
+
+      - name: Test
+        run: |
+          pytest ./tests -v --cov=./src --cov-report=term-missing --cov-report=xml
+
+      # xmlの中のテストのパスをgithub pluginのsonarqube用に加工する
+      - name: Override Coverage Source Path for plugin Sonar
+        run: |
+          sed -i 's/home\/runner\/work\/sample_Repository\/sample_Repository/github\/workspace/' coverage.xml
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
