@@ -1,7 +1,7 @@
 # これは GitHub Actions を始めるための基本的なワークフローです
 
 # ワークフロー名
-name: CI
+name: Pytest
 
 # ワークフローの実行タイミングを制御します
 on:
