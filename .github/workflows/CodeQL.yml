@@ -1,4 +1,4 @@
-name: CI
+name: CodeQL
 
 permissions:
   checks: write
@@ -14,16 +14,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  integrated-ci:
+    name: Integrated CI Pipeline
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
       # Python環境のセットアップ
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+
+      # Java環境のセットアップ（SonarQube用）
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       # 依存関係のインストール
       - name: Install dependencies
@@ -51,21 +61,7 @@ jobs:
         with:
           files: results/*.xml
 
-  sonar:
-    name: SonarQube Analysis
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      # Java環境のセットアップ（SonarQube用）
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # SonarQube Scannerの実行
+      # SonarQube Scannerの実行（Pytest結果を品質分析に活用）
       - name: Run SonarQube Scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -80,20 +76,11 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-  codeql:
-    name: CodeQL Analysis
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-
-      # CodeQL初期化
+      # CodeQL初期化と解析（SonarQube後にセキュリティ分析）
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: python
-      # CodeQL解析の実行
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
