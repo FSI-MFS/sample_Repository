@@ -24,9 +24,8 @@ jobs:
 
       - uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ sqp_67673b2ae9163f01141fd6fd0a90440ce6cf5c20 }}
-          SONAR_HOST_URL: ${{ http://localhost:9000/ }}
-
+          SONAR_TOKEN: ${{sqp_67673b2ae9163f01141fd6fd0a90440ce6cf5c20}}
+          SONAR_HOST_URL: ${{http://localhost:9000/}}
       # 以下の行をコメントアウト解除すると、Quality Gate（品質ゲート）が「赤」の場合にジョブを失敗させることができます。
       # これは、品質が基準を満たしていない場合にデプロイを止める用途で使われます。
       # - uses: SonarSource/sonarqube-quality-gate-action@v1
