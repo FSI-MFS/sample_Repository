@@ -1,0 +1,45 @@
+# ワークフロー名：CI
+name: Valgrind
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+# ワークフローの実行タイミングを制御します
+on:
+  # "master"ブランチへの push または pull request 時にワークフローを実行します
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Actions タブから手動でこのワークフローを実行できます
+  workflow_dispatch:
+
+jobs:
+  valgrind-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential valgrind
+
+    - name: Build project
+      run: |
+        make  # または cmake && make など、あなたのビルド方法に合わせて変更
+
+    - name: Run Valgrind on test binary
+      run: |
+        valgrind --leak-check=full \
+                 --error-exitcode=1 \
+                 ./your_test_binary  # 実行ファイル名に合わせて変更
+
+    - name: Upload Valgrind log (optional)
+      if: failure()
+      run: echo "Valgrind failed. See logs above."
