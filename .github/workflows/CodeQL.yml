@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript', 'typescript']
+        language: ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
         # CodeQLがサポートする言語一覧：
         # ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
         # 詳細：https://git.io/codeql-language-support
