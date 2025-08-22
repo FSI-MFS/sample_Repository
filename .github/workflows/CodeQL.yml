@@ -53,8 +53,9 @@ jobs:
 
       # Autobuildは、C/C++、C#、Javaなどのコンパイル言語を自動的にビルドしようとします。
       # このステップが失敗した場合は、削除して手動でビルドを行ってください（下記参照）
-      - name: Autobuild（自動ビルド）
-        uses: github/codeql-action/autobuild@v3
+      - name: Build manually
+        run: gcc -g -o test/test test/test.c
+
 
       # ℹ️ OSのシェルで実行するコマンドラインプログラムです。
       # 📚 詳細：https://git.io/JvXDl
