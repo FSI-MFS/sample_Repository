@@ -1,13 +1,13 @@
 name: Valgrind Analysis
 
 on:
-  # "master"ブランチへの push または pull request 時にワークフローを実行します
+  # masterブランチへのpushまたはpull request時にワークフローを実行
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
-  # Actions タブから手動でこのワークフローを実行できます
+  # Actionsタブから手動実行も可能
   workflow_dispatch:
 
 jobs:
@@ -15,40 +15,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # リポジトリのコードをチェックアウト
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # Valgrindとビルドツールをインストール
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential valgrind
 
-    - name: Compile test.c
-      run: gcc -g -o test test.c
+    # testフォルダ内のtest.cをコンパイル（デバッグ情報付き）
+    - name: Compile test/test.c
+      run: gcc -g -o test/test test/test.c
 
+    # Memcheckでメモリリークや未初期化メモリの検出
     - name: Run Memcheck
       run: |
         valgrind --tool=memcheck \
                  --leak-check=full \
                  --track-origins=yes \
-                 --log-file=memcheck.log ./test
-
+                 --log-file=memcheck.log ./test/test
+    # Callgrindで関数呼び出しのプロファイリング
     - name: Run Callgrind
       run: |
         valgrind --tool=callgrind \
-                 --log-file=callgrind.log ./test
+                 --log-file=callgrind.log ./test/test
 
+    # Massifでヒープメモリ使用量のプロファイリング
     - name: Run Massif
       run: |
         valgrind --tool=massif \
-                 --log-file=massif.log ./test
+                 --log-file=massif.log ./test/test
+        # Massifの出力を人間が読みやすい形式に変換
         ms_print massif.out.* > massif.txt
 
+    # Helgrindでスレッド間のデータ競合を検出（マルチスレッドコード向け）
     - name: Run Helgrind
       run: |
         valgrind --tool=helgrind \
-                 --log-file=helgrind.log ./test
+                 --log-file=helgrind.log ./test/test
 
+    # Valgrindのログファイルを成果物としてアップロード
     - name: Upload Valgrind logs
       uses: actions/upload-artifact@v4
       with:

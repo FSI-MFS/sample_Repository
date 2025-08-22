@@ -43,7 +43,7 @@ jobs:
 
       # CodeQLツールを初期化してスキャンの準備をします
       - name: CodeQLの初期化
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           # 独自のクエリを指定したい場合は、ここか設定ファイルで指定できます。
@@ -54,7 +54,7 @@ jobs:
       # Autobuildは、C/C++、C#、Javaなどのコンパイル言語を自動的にビルドしようとします。
       # このステップが失敗した場合は、削除して手動でビルドを行ってください（下記参照）
       - name: Autobuild（自動ビルド）
-        uses: github/codeql-action/autobuild@v1
+        uses: github/codeql-action/autobuild@v3
 
       # ℹ️ OSのシェルで実行するコマンドラインプログラムです。
       # 📚 詳細：https://git.io/JvXDl
@@ -66,6 +66,4 @@ jobs:
 
       # CodeQL解析を実行し、結果をSARIF形式でアップロードします
       - name: CodeQL解析の実行
-        uses: github/codeql-action/analyze@v1
-
-
+        uses: github/codeql-action/analyze@v3
