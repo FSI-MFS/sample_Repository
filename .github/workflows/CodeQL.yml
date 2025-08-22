@@ -1,44 +1,69 @@
-name: CodeQL
-
-permissions:
-  checks: write
-  pull-requests: write
-  contents: read
-  security-events: write  # CodeQL用
+# ほとんどのプロジェクトでは、このワークフローファイルを変更する必要はありません。
+# リポジトリにこのファイルをコミットするだけで使用できます。
+#
+# 解析対象の言語を変更したり、独自のクエリやビルド処理を追加したい場合は、
+# このファイルを編集してください。
+#
+# ******** 注意 ********
+# リポジトリ内の言語を自動検出しています。
+# 下の `language` マトリクスを確認して、CodeQLがサポートする言語が正しく設定されているか確認してください。
+name: "CodeQL"
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
   workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    # 下記のブランチは上記のブランチのサブセットである必要があります
+    branches: [main]
 
 jobs:
-
   analyze:
-    name: Analyze with CodeQL
+    name: Analyze
     runs-on: ubuntu-latest
+
     permissions:
       actions: read
       contents: read
-      security-events: write
+      security-events: write  # CodeQLの結果をセキュリティイベントとしてアップロードするために必要
 
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp', 'javascript', 'python', 'java', 'go' ]  # 必要に応じて追加・削除可能
+        language: ['javascript', 'typescript']
+        # CodeQLがサポートする言語一覧：
+        # ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
+        # 詳細：https://git.io/codeql-language-support
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v2
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
+      # CodeQLツールを初期化してスキャンの準備をします
+      - name: CodeQLの初期化
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+          # 独自のクエリを指定したい場合は、ここか設定ファイルで指定できます。
+          # デフォルトでは、ここに記載したクエリが設定ファイルの内容を上書きします。
+          # `+` を先頭につけると、ここで指定したクエリと設定ファイルの両方を使用できます。
+          # queries: +./path/to/local/query, your-org/your-repo/queries@main
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      # Autobuildは、C/C++、C#、Javaなどのコンパイル言語を自動的にビルドしようとします。
+      # このステップが失敗した場合は、削除して手動でビルドを行ってください（下記参照）
+      - name: Autobuild（自動ビルド）
+        uses: github/codeql-action/autobuild@v1
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      # ℹ️ OSのシェルで実行するコマンドラインプログラムです。
+      # 📚 詳細：https://git.io/JvXDl
+      # ✏️ Autobuildが失敗した場合は、上記ステップを削除し、以下の3行をコメント解除して、
+      # 必要に応じて修正・追加してください
+      #- run: |
+      #    make bootstrap
+      #    make release
+
+      # CodeQL解析を実行し、結果をSARIF形式でアップロードします
+      - name: CodeQL解析の実行
+        uses: github/codeql-action/analyze@v1
+
 
