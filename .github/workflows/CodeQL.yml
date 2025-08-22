@@ -43,7 +43,7 @@ jobs:
 
       # CodeQLツールを初期化してスキャンの準備をします
       - name: CodeQLの初期化
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
           # 独自のクエリを指定したい場合は、ここか設定ファイルで指定できます。
