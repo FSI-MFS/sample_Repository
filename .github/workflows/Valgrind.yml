@@ -1,12 +1,14 @@
 name: Valgrind Analysis
 
 on:
-  workflow_dispatch:
+  # "master"ブランチへの push または pull request 時にワークフローを実行します
   push:
-    branches: [main]
+    branches: [ "master" ]
   pull_request:
-    # 下記のブランチは上記のブランチのサブセットである必要があります
-    branches: [main]
+    branches: [ "master" ]
+
+  # Actions タブから手動でこのワークフローを実行できます
+  workflow_dispatch:
 
 jobs:
   build-and-analyze:
