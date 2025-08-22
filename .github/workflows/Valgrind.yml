@@ -25,9 +25,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential valgrind
 
-    # testフォルダ内のtest.cをコンパイル（デバッグ情報付き）
-    - name: Compile test/test.c
-      run: gcc -g -o test/test test/test.c
+    # testフォルダ内のtest.cppをコンパイル（デバッグ情報付き）
+    - name: Compile test/test.cpp
+      run: gcc -g -o test/test test/test.cpp
 
     # Memcheckでメモリリークや未初期化メモリの検出
     - name: Run Memcheck
