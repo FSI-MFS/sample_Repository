@@ -23,7 +23,6 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-
     permissions:
       actions: read
       contents: read
@@ -32,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
+        language: ['cpp']
         # CodeQLがサポートする言語一覧：
         # ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
         # 詳細：https://git.io/codeql-language-support
