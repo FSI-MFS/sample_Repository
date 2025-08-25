@@ -27,7 +27,7 @@ jobs:
 
     # testフォルダ内のtest.cppをコンパイル（デバッグ情報付き）
     - name: Compile test/test.cpp
-      run: gcc -g -o test/test test/test.cpp
+      run: g++ -g -o test/test test/test.cpp
 
     # Memcheckでメモリリークや未初期化メモリの検出
     - name: Run Memcheck
