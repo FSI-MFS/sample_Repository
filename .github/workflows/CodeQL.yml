@@ -20,50 +20,95 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write  # CodeQLの結果をセキュリティイベントとしてアップロードするために必要
-
+  CodeQL-Build:
     strategy:
-      fail-fast: false
+      fail-fast: false  # ✅ 1つのジョブが失敗しても他は継続
       matrix:
-        language: ['cpp']
-        # CodeQLがサポートする言語一覧：
-        # ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
-        # 詳細：https://git.io/codeql-language-support
+        language: ['actions', 'csharp']  # ✅ 言語マトリクス。ここを ['cpp'] に変更すればC++対応
+
+    runs-on: ubuntu-latest  # ✅ GitHubが提供する最新のUbuntu環境で実行
+
+    permissions:
+      contents: read  # ✅ リポジトリの内容を読み取る権限
+      security-events: write  # ✅ セキュリティスキャン結果をアップロードする権限
+      pull-requests: read  # ✅ PRの内容を読み取る権限
 
     steps:
-      - name: リポジトリのチェックアウト
-        uses: actions/checkout@v2
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.100  # ✅ .NET 9.0.100 をセットアップ（C#用）
 
-      # CodeQLツールを初期化してスキャンの準備をします
-      - name: CodeQLの初期化
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          # 独自のクエリを指定したい場合は、ここか設定ファイルで指定できます。
-          # デフォルトでは、ここに記載したクエリが設定ファイルの内容を上書きします。
-          # `+` を先頭につけると、ここで指定したクエリと設定ファイルの両方を使用できます。
-          # queries: +./path/to/local/query, your-org/your-repo/queries@main
+    - name: Checkout repository
+      uses: actions/checkout@v4  # ✅ リポジトリのコードを取得
 
-      # Autobuildは、C/C++、C#、Javaなどのコンパイル言語を自動的にビルドしようとします。
-      # このステップが失敗した場合は、削除して手動でビルドを行ってください（下記参照）
-      - name: Build manually
-        run: g++ -g -o test/test test/test.cpp
+    # ✅ CodeQLツールを初期化。解析対象言語と設定ファイルを指定
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@main
+      with:
+        languages: ${{ matrix.language }}  # ✅ マトリクスから言語を取得（C++なら 'cpp'）
+        config-file: ./.github/codeql/codeql-config.yml  # ✅ クエリやオプションを定義する設定ファイル
+
+    # ✅ AutobuildはC/C++/C#/Javaなどのビルドを自動で試みる
+    # ✅ C++の場合、失敗することが多いため手動ビルド推奨
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@main
+
+    # ✅ 手動ビルドの例（C#プロジェクト用）
+    # ✅ C++の場合は `make` や `cmake` などに置き換える
+    - run: |
+       cd csharp
+       dotnet tool restore
+       dotnet build .
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@main  # ✅ CodeQLによる解析を実行
+
+      
+  # analyze:
+  #   name: Analyze
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write  # CodeQLの結果をセキュリティイベントとしてアップロードするために必要
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       language: ['cpp']
+  #       # CodeQLがサポートする言語一覧：
+  #       # ['cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby']
+  #       # 詳細：https://git.io/codeql-language-support
+
+  #   steps:
+  #     - name: リポジトリのチェックアウト
+  #       uses: actions/checkout@v2
+
+  #     # CodeQLツールを初期化してスキャンの準備をします
+  #     - name: CodeQLの初期化
+  #       uses: github/codeql-action/init@v3
+  #       with:
+  #         languages: ${{ matrix.language }}
+  #         # 独自のクエリを指定したい場合は、ここか設定ファイルで指定できます。
+  #         # デフォルトでは、ここに記載したクエリが設定ファイルの内容を上書きします。
+  #         # `+` を先頭につけると、ここで指定したクエリと設定ファイルの両方を使用できます。
+  #         # queries: +./path/to/local/query, your-org/your-repo/queries@main
+
+  #     # Autobuildは、C/C++、C#、Javaなどのコンパイル言語を自動的にビルドしようとします。
+  #     # このステップが失敗した場合は、削除して手動でビルドを行ってください（下記参照）
+  #     - name: Build manually
+  #       run: g++ -g -o test/test test/test.cpp
 
 
-      # ℹ️ OSのシェルで実行するコマンドラインプログラムです。
-      # 📚 詳細：https://git.io/JvXDl
-      # ✏️ Autobuildが失敗した場合は、上記ステップを削除し、以下の3行をコメント解除して、
-      # 必要に応じて修正・追加してください
-      #- run: |
-      #    make bootstrap
-      #    make release
+  #     # ℹ️ OSのシェルで実行するコマンドラインプログラムです。
+  #     # 📚 詳細：https://git.io/JvXDl
+  #     # ✏️ Autobuildが失敗した場合は、上記ステップを削除し、以下の3行をコメント解除して、
+  #     # 必要に応じて修正・追加してください
+  #     #- run: |
+  #     #    make bootstrap
+  #     #    make release
 
-      # CodeQL解析を実行し、結果をSARIF形式でアップロードします
-      - name: CodeQL解析の実行
-        uses: github/codeql-action/analyze@v3
+  #     # CodeQL解析を実行し、結果をSARIF形式でアップロードします
+  #     - name: CodeQL解析の実行
+  #       uses: github/codeql-action/analyze@v3
