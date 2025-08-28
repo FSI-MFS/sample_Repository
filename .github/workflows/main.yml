@@ -1,0 +1,45 @@
+# ワークフロー名：CI
+name: Pytest
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+# ワークフローの実行タイミングを制御します
+on:
+  # "master"ブランチへの push または pull request 時にワークフローを実行します
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Actions タブから手動でこのワークフローを実行できます
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SBOM
+        run: |
+          # Replace <image> with your container image name or use a directory path
+          syft test/test test/test.cpp -o cyclonedx-json > sbom.json
+
+      - name: Install Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Scan for Vulnerabilities
+        run: |
+          # Scan the container image or the SBOM for vulnerabilities
+          grype test/test test/test.cpp --fail-on high
+          # Alternatively, scan using the generated SBOM:
+          # grype sbom:sbom.json --fail-on high
