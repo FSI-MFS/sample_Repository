@@ -1,5 +1,5 @@
 # ワークフロー名：CI
-name: Pytest
+name: Syft
 
 permissions:
   checks: write
