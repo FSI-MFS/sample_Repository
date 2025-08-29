@@ -31,7 +31,7 @@ jobs:
       - name: Generate SBOM
         run: |
           # Replace <image> with your container image name or use a directory path
-          syft sbom:sbom.json -o cyclonedx-json > sbom.json
+          syft test/test_syft.cpp -o cyclonedx-json > sbom.json
 
       - name: Install Grype
         run: |
@@ -40,6 +40,6 @@ jobs:
       - name: Scan for Vulnerabilities
         run: |
           # Scan the container image or the SBOM for vulnerabilities
-          grype test/test.cpp --fail-on high
+          grype sbom:sbom.json --fail-on high
           # Alternatively, scan using the generated SBOM:
           # grype sbom:sbom.json --fail-on high
