@@ -31,7 +31,7 @@ jobs:
       - name: Generate SBOM
         run: |
           # Replace <image> with your container image name or use a directory path
-          syft test/test.cpp -o cyclonedx-json > sbom.json
+          syft sbom:sbom.json -o cyclonedx-json > sbom.json
 
       - name: Install Grype
         run: |
