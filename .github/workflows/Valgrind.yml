@@ -2,10 +2,10 @@ name: Valgrind Analysis
 
 on:
   # masterブランチへのpushまたはpull request時にワークフローを実行
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  # push:
+  #   branches: [ "master" ]
+  # pull_request:
+  #   branches: [ "master" ]
 
   # Actionsタブから手動実行も可能
   workflow_dispatch:

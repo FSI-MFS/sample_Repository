@@ -1,0 +1,27 @@
+name: Clang-Tidy Check
+
+on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+  # Actions タブから手動でこのワークフローを実行できます
+  workflow_dispatch:
+    
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y clang-tidy cmake build-essential
+
+    - name: Configure project
+      run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+
+    - name: Run clang-tidy
+      run: clang-tidy src/*.cpp -- -Iinclude

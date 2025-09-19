@@ -9,10 +9,10 @@ permissions:
 # ワークフローの実行タイミングを制御します
 on:
   # "master"ブランチへの push または pull request 時にワークフローを実行します
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  # push:
+  #   branches: [ "master" ]
+  # pull_request:
+  #   branches: [ "master" ]
 
   # Actions タブから手動でこのワークフローを実行できます
   workflow_dispatch:
