@@ -3,6 +3,6 @@ project(TestProject)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(test)
+file(GLOB SOURCES "test/*.cpp")
 
-add_executable(test_app test/*.cpp)
+add_executable(test_app ${SOURCES})
