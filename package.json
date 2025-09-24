@@ -1,0 +1,26 @@
+{
+  "name": "sample_repository20250919",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FSI-MFS/sample_Repository.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FSI-MFS/sample_Repository/issues"
+  },
+  "homepage": "https://github.com/FSI-MFS/sample_Repository#readme",
+  "devDependencies": {
+    "jest": "^30.1.3"
+  }
+}
