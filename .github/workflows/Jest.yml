@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "Jest"
 
 on:
   # "master"ブランチへの push または pull request 時にワークフローを実行します
