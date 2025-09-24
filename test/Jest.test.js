@@ -56,10 +56,3 @@ describe('マッチャーの例', () => {
     expect(obj1).not.toBe(obj2); // 同じオブジェクト参照ではない
   });
 });
-
-describe('スナップショットテストの例', () => {
-  test('オブジェクトのスナップショット', () => {
-    const user = { name: 'Alice', age: 30 };
-    expect(user).toMatchSnapshot();
-  });
-});
