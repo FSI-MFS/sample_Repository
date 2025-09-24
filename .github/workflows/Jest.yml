@@ -1,0 +1,17 @@
+name: Jest
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create package.json
+        run: npm init -y
+
+      - name: Install Jest
+        run: npm install --save-dev jest
+
+      - name: Run Jest tests
